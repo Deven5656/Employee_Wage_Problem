@@ -3,7 +3,7 @@
     @Date: 31-07-2024
     @Last Modified by: Deven Gupta
     @Last Modified time: 31-07-2024
-    @Title : UC-3 Python program to Calculate Wage for part-time 
+    @Title : UC-4 Python program to Calculate Wage using switch case
 
 """   
 print("Welcome to Employee Wage Computation Program\n")
@@ -21,18 +21,15 @@ def check_attendance():
     Parameters:
         None
     Returns:
-        boolean : True if present else False(absent)
+        int : 0, 1, 2
         
     """
     status = random.choice([0,1,2])
     if status == 1 :
-        print("Employee Full-time Employee")
         return 1
     elif status == 2 :
-        print("Employee Part-time Employee")
         return 2
     elif status == 0:
-        print("Employee Absent")
         return 0
 
 
@@ -48,13 +45,20 @@ def cal_daily_wage():
     """
     daily_wage = 0
     status = check_attendance()
-    if status == 1:
-        daily_wage = WAGE_PER_HOUR * FULL_TIME_HOUR
-        return daily_wage
-    elif status == 2:
-        daily_wage = WAGE_PER_HOUR * PART_TIME_HOUR
-        return daily_wage
-    return daily_wage
+
+    match status:
+        case 1:
+            print("Employee Full-time Employee")
+            daily_wage = WAGE_PER_HOUR * FULL_TIME_HOUR
+            return daily_wage
+        case 2:
+            print("Employee Part-time Employee")
+            daily_wage = WAGE_PER_HOUR * PART_TIME_HOUR
+            return daily_wage
+        case 0:
+             print("Employee Absent")
+             return daily_wage
+
 
 def main():
     print(f"The Daily wage of Employee is {cal_daily_wage()}")
