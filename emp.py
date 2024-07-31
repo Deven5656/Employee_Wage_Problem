@@ -39,7 +39,7 @@ def cal_daily_wage():
     Parameters:
         None
     Returns:
-        int : daily wage
+        int : daily wage after calculation
 
     """
     daily_wage = 0
