@@ -3,23 +3,20 @@
     @Date: 1-08-2024
     @Last Modified by: Deven Gupta
     @Last Modified time: 1-08-2024
-    @Title : UC-7 Python program to Calculate Monthly Wage (day=20,hour=100) (refactor using class)
+    @Title : UC-8 Python program to Calculate Monthly Wage (Multiple Companies)
 """
 import random
 
 class EmployeeWage:
-   
-    WAGE_PER_HOUR = 20
+
     FULL_TIME_HOUR = 8
     PART_TIME_HOUR = 4
-    MAX_HOURS = 100
-    MAX_DAYS = 20
-
-    def __init__(self):
-        self.total_wage = 0
-        self.total_hours = 0
-        self.total_days = 0
-        self.lst_hour = []
+   
+    def __init__(self,wph,max_hours,max_days):
+        self.WAGE_PER_HOUR = wph
+        self.MAX_HOURS = max_hours
+        self.MAX_DAYS = max_days
+       
 
    
     def check_attendance(self):
@@ -62,31 +59,56 @@ class EmployeeWage:
         Returns:
             tuple: (total monthly wage, total working hours, total working days ,list containing hours)
         """
-        while self.total_hours < self.MAX_HOURS and self.total_days < self.MAX_DAYS:
+        total_wage = 0
+        total_hours = 0
+        total_days = 0
+        lst_hour = []
+        while total_hours < self.MAX_HOURS and total_days < self.MAX_DAYS:
             daily_wage = self.cal_daily_wage()
-            self.total_wage += daily_wage
+            total_wage += daily_wage
             if daily_wage > 0:
                 if daily_wage == self.WAGE_PER_HOUR * self.FULL_TIME_HOUR:
-                    self.total_hours += self.FULL_TIME_HOUR
-                    self.lst_hour.append(self.FULL_TIME_HOUR)
+                    total_hours += self.FULL_TIME_HOUR
+                    lst_hour.append(self.FULL_TIME_HOUR)
                 else:
-                    self.total_hours += self.PART_TIME_HOUR
-                    self.lst_hour.append(self.PART_TIME_HOUR)
-                self.total_days += 1
-            
-            if self.total_hours >= 104:
-                self.total_wage = 2000
-                break
+                    total_hours += self.PART_TIME_HOUR
+                    lst_hour.append(self.PART_TIME_HOUR)
+                total_days += 1
 
-        return self.total_wage, self.total_hours, self.total_days, self.lst_hour
+        return total_wage, total_hours, total_days, lst_hour
 
 def main():
-    emp_wage = EmployeeWage()
-    wage, hours, days, lst = emp_wage.compute_monthly_wage()
-    print(f"The Monthly wage of Employee is {wage}")
-    print(f"Total Working Hours: {hours}")
-    print(f"Total Working Days: {days}")
-    print(f"Hours worked per day: {lst}")
+
+    number_of_company =int(input("Total company : "))
+
+    for _ in range(number_of_company):
+        company_name =input("company name : ")
+        wage_per_hour =int(input("wage per hour : "))
+        hours_no =int(input("hours per month : "))
+        day_no =int(input("Number of days : "))
+        company = EmployeeWage(wage_per_hour,hours_no,day_no)
+        wage, hours, days, lst = company.compute_monthly_wage()
+        print(f"THE COMPANY NAME IS {company_name}")
+        print(f"The Monthly wage of Employee is {wage}")
+        print(f"Total Working Hours: {hours}")
+        print(f"Total Working Days: {days}")
+        print(f"Hours worked per day: {lst}\n")
+
+        
+    # tata = EmployeeWage(20,100,20)
+    # wage, hours, days, lst = tata.compute_monthly_wage()
+    # print(f"The Monthly wage of Employee is {wage}")
+    # print(f"Total Working Hours: {hours}")
+    # print(f"Total Working Days: {days}")
+    # print(f"Hours worked per day: {lst}\n")
+
+
+    # infosys = EmployeeWage(30,150,30)
+    # wage, hours, days, lst = infosys.compute_monthly_wage()
+    # print(f"The Monthly wage of Employee is {wage}")
+    # print(f"Total Working Hours: {hours}")
+    # print(f"Total Working Days: {days}")
+    # print(f"Hours worked per day: {lst}\n")
 
 if __name__ == "__main__":
     main()
