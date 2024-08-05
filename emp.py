@@ -8,13 +8,13 @@
 import random
 
 class EmployeeWage:
-    WAGE_PER_HOUR = 20
     FULL_TIME_HOUR = 8
     PART_TIME_HOUR = 4
-    MAX_HOURS = 100
-    MAX_DAYS = 20
-
-    def __init__(self):
+    
+    def __init__(self, wage_per_hour, max_hours, max_days):
+        self.WAGE_PER_HOUR = wage_per_hour
+        self.MAX_HOURS = max_hours
+        self.MAX_DAYS = max_days
         self.total_wage = 0
         self.total_hours = 0
         self.total_days = 0
@@ -57,7 +57,6 @@ class EmployeeWage:
         Returns:
             tuple: (total monthly wage, total working hours, total working days, list of hours worked per day)
         """
-
         while self.total_hours < self.MAX_HOURS and self.total_days < self.MAX_DAYS:
             daily_wage = self.cal_daily_wage()
             self.total_wage += daily_wage
@@ -65,10 +64,10 @@ class EmployeeWage:
             if daily_wage > 0:
                 if daily_wage == self.WAGE_PER_HOUR * self.FULL_TIME_HOUR:
                     self.total_hours += self.FULL_TIME_HOUR
-                    self.hours_per_day.append(self.FULL_TIME_HOUR)
+                    self.hours_per_day.append(self.FULL_TIME_HOUR * self.WAGE_PER_HOUR)
                 else:
                     self.total_hours += self.PART_TIME_HOUR
-                    self.hours_per_day.append(self.PART_TIME_HOUR)
+                    self.hours_per_day.append(self.PART_TIME_HOUR * self.WAGE_PER_HOUR)
                 self.total_days += 1
             
             # Cap wage calculation at MAX_HOURS
@@ -79,10 +78,10 @@ class EmployeeWage:
         return self.total_wage, self.total_hours, self.total_days, self.hours_per_day
 
 class Employee:
-    def __init__(self, emp_id, name):
+    def __init__(self, emp_id, name, wage_calculator):
         self.emp_id = emp_id
         self.name = name
-        self.wage_calculator = EmployeeWage()
+        self.wage_calculator = wage_calculator
 
     def __str__(self):
         return f"ID: {self.emp_id}, Name: {self.name}"
@@ -108,7 +107,8 @@ class Company:
         if emp_id in self.employees:
             print(f"Employee with ID {emp_id} already exists.")
         else:
-            self.employees[emp_id] = Employee(emp_id, name)
+            wage_calculator = EmployeeWage(self.wage_per_hour, self.total_monthly_hours, self.total_working_days)
+            self.employees[emp_id] = Employee(emp_id, name, wage_calculator)
             print(f"Employee {name} added successfully.")
 
     def get_employee(self, emp_id):
@@ -164,8 +164,9 @@ class Company:
         wages = {}
         for emp in self.employees.values():
             wage_calculator = emp.wage_calculator
-            wage, hours, days, _ = wage_calculator.compute_monthly_wage()
+            wage, hours, days, lst = wage_calculator.compute_monthly_wage()
             wages[emp.emp_id] = wage
+            print(f"Employee {emp.emp_id} -- total hr :{hours} , total days :{days} and per day wage :{lst}")
         
         return wages
 
@@ -174,7 +175,7 @@ class Company:
 
 class CompanyManager:
     def __init__(self):
-        self.companies = {}    # company name ,wage per hr,total days,total hr
+        self.companies = {}
 
     def add_company(self, company_name, wage_per_hour, total_working_days, total_monthly_hours):
         """
@@ -251,7 +252,7 @@ def main():
 
         if choice == '1':
             company_name = input("Enter company name: ")
-            wage_per_hour = float(input("Enter wage per hour: "))
+            wage_per_hour = int(input("Enter wage per hour: "))
             total_working_days = int(input("Enter total working days in a month: "))
             total_monthly_hours = int(input("Enter total monthly hours: "))
             manager.add_company(company_name, wage_per_hour, total_working_days, total_monthly_hours)
@@ -304,8 +305,11 @@ def main():
             else:
                 wages = company.calculate_monthly_wages()
                 print(f"\nMonthly Wages for {company_name}:")
+                total_company_wage=0
                 for emp_id, wage in wages.items():
-                    print(f"Employee ID: {emp_id}, Monthly Wage: {wage:.2f}")
+                    total_company_wage+=wage
+                    print(f"Employee ID: {emp_id}, Monthly Wage: {wage}")
+                print(f"The total wage spend by company is {total_company_wage}")
 
         elif choice == '6':
             print("Exiting the system.")
